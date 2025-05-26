@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Walter Meeting</title>
+  <link rel="stylesheet" href="/public/css/styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header id="main-header">
+    <div class="container header-content">
+      <a href="#" class="logo" id="logo-link">
+        <i class="fas fa-microphone-alt"></i>
+        <span>Walter Meeting</span>
+      </a>
+      <nav>
+        <ul id="main-menu">
+          <li><a href="#" id="nav-home" class="nav-active">Inicio</a></li>
+          <li><a href="#" id="nav-meetings">Reuniones</a></li>
+          <li><a href="#" id="nav-upload">Subir Audio</a></li>
+          <li><a href="#" id="nav-dashboard">Dashboard</a></li>
+        </ul>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+          <i class="fas fa-bars"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" id="app">
+      <!-- El contenido se cargará dinámicamente aquí -->
+      <div id="home-view">
+        <!-- Sección Hero -->
+        <section class="hero-section">
+          <div class="hero-content">
+            <div class="hero-badge">Nueva Tecnología <i class="fas fa-bolt"></i></div>
+            <h1 class="hero-title">Transforme sus reuniones con <span class="text-gradient">Inteligencia Artificial</span></h1>
+            <p class="hero-subtitle">Obtenga transcripciones precisas, análisis detallados y planes de acción claros a partir de sus reuniones empresariales. Mejore la productividad y el seguimiento de decisiones.</p>
+            <div class="hero-buttons">
+              <button class="btn btn-primary btn-lg" id="get-started-btn">
+                <i class="fas fa-rocket"></i> Comenzar Ahora
+              </button>
+              <button class="btn btn-outline btn-lg" id="learn-more-btn">
+                <i class="fas fa-info-circle"></i> Más Información
+              </button>
+            </div>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <span class="hero-stat-number">98%</span>
+                <span class="hero-stat-label">Precisión</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-number">75%</span>
+                <span class="hero-stat-label">Ahorro de tiempo</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-number">24/7</span>
+                <span class="hero-stat-label">Disponibilidad</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-image">
+            <div class="hero-image-decoration"></div>
+            <img src="/public/images/hero-illustration.svg" alt="Ilustración de análisis de reuniones" class="hero-img">
+          </div>
+        </section>
+
+        <!-- Sección de Características -->
+        <section class="features-section">
+          <div class="section-header">
+            <h2 class="section-title">Potentes <span class="text-gradient">funcionalidades</span> para sus reuniones</h2>
+            <p class="section-description">Nuestro sistema utiliza inteligencia artificial avanzada para transformar sus reuniones en información accionable y planes concretos.</p>
+          </div>
+
+          <div class="card-grid">
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-microphone-alt"></i>
+              </div>
+              <h3 class="feature-title">Transcripción Automática</h3>
+              <p>Convierte automáticamente el audio de sus reuniones en texto preciso utilizando tecnología de vanguardia.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+              </div>
+              <h3 class="feature-title">Análisis Inteligente</h3>
+              <p>Identifica temas clave, sentimientos y patrones en las conversaciones para obtener insights valiosos.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <h3 class="feature-title">Resúmenes Concisos</h3>
+              <p>Genera resúmenes ejecutivos de las reuniones, destacando los puntos más importantes.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <h3 class="feature-title">Seguimiento de Tareas</h3>
+              <p>Extrae automáticamente tareas y compromisos mencionados durante la reunión.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-question-circle"></i>
+              </div>
+              <h3 class="feature-title">Captura de Q&A</h3>
+              <p>Identifica y organiza preguntas y respuestas para facilitar el seguimiento posterior.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3 class="feature-title">Planificación Automática</h3>
+              <p>Crea planes y cartas Gantt basados en los objetivos y plazos identificados.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sección CTA -->
+        <section class="cta-section">
+          <div class="cta-content">
+            <h2 class="cta-title">¿Listo para <span class="cta-highlight">optimizar</span> sus reuniones?</h2>
+            <p class="cta-description">Comience hoy mismo a transformar sus reuniones en acciones concretas y mejore la productividad de su equipo.</p>
+            <div class="cta-buttons">
+              <button class="btn btn-primary btn-lg" id="cta-upload-btn">
+                <i class="fas fa-upload"></i> Subir Audio
+              </button>
+              <button class="btn btn-outline btn-lg" id="cta-demo-btn">
+                <i class="fas fa-play-circle"></i> Ver Demo
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="upload-view" style="display: none;">
+        <h1 class="section-title">Subir Grabación de Reunión</h1>
+        <div class="card">
+          <div id="audio-uploader" class="uploader">
+            <div class="uploader-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3 class="uploader-text">Arrastra y suelta un archivo de audio o haz clic para seleccionarlo</h3>
+            <p class="uploader-hint">Formatos soportados: MP3, WAV, OGG, M4A (máx. 50MB)</p>
+            <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
+          </div>
+          <div id="upload-progress" style="display: none;">
+            <div class="mt-4 mb-4">
+              <div class="loading">
+                <div class="loading-spinner"></div>
+              </div>
+              <p class="text-center mt-2">Procesando archivo de audio...</p>
+            </div>
+          </div>
+          <div id="upload-success" class="alert alert-success" style="display: none;">
+            <i class="fas fa-check-circle"></i> Archivo subido correctamente. Procesando...
+          </div>
+          <div id="upload-error" class="alert alert-danger" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> <span id="error-message">Error al subir el archivo.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="meetings-view" style="display: none;">
+        <h1 class="section-title">Reuniones Procesadas</h1>
+        <div class="card">
+          <div id="meetings-list-container">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="meeting-details-view" style="display: none;">
+        <div class="flex justify-between items-center mb-4">
+          <h1 class="section-title" id="meeting-title">Detalles de la Reunión</h1>
+          <div>
+            <button class="btn btn-primary mr-2" id="download-report-btn">
+              <i class="fas fa-file-word"></i> Descargar Informe
+            </button>
+            <button class="btn btn-outline" id="back-to-meetings-btn">
+              <i class="fas fa-arrow-left"></i> Volver
+            </button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="transcription">Transcripción</div>
+          <div class="tab" data-tab="summary">Resumen</div>
+          <div class="tab" data-tab="analysis">Análisis</div>
+          <div class="tab" data-tab="plan">Plan</div>
+        </div>
+
+        <div class="card tab-content active" id="transcription-tab">
+          <h2 class="card-title">Transcripción</h2>
+          <div id="transcription-content">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card tab-content" id="summary-tab">
+          <h2 class="card-title">Resumen de la Reunión</h2>
+          <div id="summary-content">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card tab-content" id="analysis-tab">
+          <h2 class="card-title">Análisis de Contenido</h2>
+          <div id="analysis-content">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card tab-content" id="plan-tab">
+          <h2 class="card-title">Plan y Carta Gantt</h2>
+          <div id="plan-content">
+            <div class="loading">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <div class="footer-logo">
+            <i class="fas fa-microphone-alt"></i>
+            <span>Walter Meeting</span>
+          </div>
+          <p>Transformando las reuniones empresariales con inteligencia artificial avanzada. Obtenga transcripciones precisas, análisis detallados y planes de acción claros.</p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Navegación</h3>
+          <ul>
+            <li><a href="#" id="footer-home">Inicio</a></li>
+            <li><a href="#" id="footer-meetings">Reuniones</a></li>
+            <li><a href="#" id="footer-upload">Subir Audio</a></li>
+            <li><a href="#" id="footer-dashboard">Dashboard</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links">
+          <h3>Recursos</h3>
+          <ul>
+            <li><a href="#">Documentación</a></li>
+            <li><a href="#">Tutoriales</a></li>
+            <li><a href="#">Preguntas frecuentes</a></li>
+            <li><a href="#">Soporte técnico</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links">
+          <h3>Contacto</h3>
+          <ul>
+            <li><a href="mailto:info@agenteai.com"><i class="fas fa-envelope"></i> info@agenteai.com</a></li>
+            <li><a href="tel:+123456789"><i class="fas fa-phone"></i> +1 (234) 567-89</a></li>
+            <li><a href="#"><i class="fas fa-map-marker-alt"></i> Av. Principal 123, Ciudad</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 Walter Meeting - Todos los derechos reservados</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/ui/app.js"></script>
+  <script src="/public/js/main.js"></script>
+</body>
+</html>
