@@ -113,7 +113,7 @@ walter-meeting/
 
 ## 📄 Licencia
 
-MIT © [Tu Nombre](https://github.com/tu-usuario)
+MIT © Lucas Lobos (https://github.com/lucaslobosp)
 
 ---
 
