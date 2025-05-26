@@ -1,4 +1,4 @@
-# 🎙️ Walter Meeting
+# 🎙️ Walter Meeting AI
 
 > *Transforme sus reuniones con Inteligencia Artificial*
 
@@ -27,8 +27,8 @@ Walter Meeting es un sistema inteligente que utiliza agentes de IA para transcri
 
 1. **Clona el repositorio**
 ```bash
-git clone https://github.com/tu-usuario/walter-meeting.git
-cd walter-meeting
+git clone https://github.com/lucaslobosp/walter-meeting-AI.git
+cd walter-meeting-AI
 ```
 
 2. **Instala las dependencias**
@@ -113,7 +113,7 @@ walter-meeting/
 
 ## 📄 Licencia
 
-MIT © Lucas Lobos (https://github.com/lucaslobosp)
+MIT © [Lucas Lobos](https://github.com/lucaslobosp)
 
 ---
 
