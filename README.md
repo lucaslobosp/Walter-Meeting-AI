@@ -2,7 +2,7 @@
 
 > *Transforme sus reuniones con Inteligencia Artificial*
 
-Walter Meeting es un sistema inteligente que utiliza agentes de IA para transcribir, analizar, resumir y planificar a partir de grabaciones de reuniones. Inspirado en "La vida secreta de Walter Mitty", esta aplicación transforma tus reuniones en información accionable y planes concretos.
+Walter Meeting es un sistema inteligente que utiliza agentes de IA para transcribir, analizar, resumir y planificar a partir de grabaciones de reuniones. Esta aplicación transforma tus reuniones en información accionable y planes concretos.
 
 ## ✨ Características
 
@@ -16,7 +16,7 @@ Walter Meeting es un sistema inteligente que utiliza agentes de IA para transcri
 
 ## 🚀 Demo en Vivo
 
-[Ver Demo](https://walter-meeting.onrender.com) *(Próximamente)*
+[Ver Demo](https://walter-meeting-ai.onrender.com) 
 
 ## 📋 Requisitos
 
