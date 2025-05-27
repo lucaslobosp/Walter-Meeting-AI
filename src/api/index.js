@@ -462,32 +462,6 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
       });
     }
 
-    // Crear documento Word
-    const doc = new Document({
-      title: `Informe de Reunión - ${meetingId}`,
-      description: 'Informe generado automáticamente por Walter Meeting',
-      styles: {
-        paragraphStyles: [
-          {
-            id: 'Normal',
-            name: 'Normal',
-            basedOn: 'Normal',
-            next: 'Normal',
-            quickFormat: true,
-            run: {
-              size: 24,
-              font: 'Calibri',
-            },
-            paragraph: {
-              spacing: {
-                line: 276,
-              },
-            },
-          },
-        ],
-      },
-    });
-
     // Elementos del documento
     const children = [];
 
@@ -524,9 +498,13 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
         })
       );
 
+      const transcriptionText = result.steps.transcription.transcription?.text ||
+                               result.steps.transcription.transcription ||
+                               'No hay transcripción disponible';
+
       children.push(
         new Paragraph({
-          text: result.steps.transcription.transcription,
+          text: String(transcriptionText),
         })
       );
     }
@@ -542,10 +520,10 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
       );
 
       // Formatear el resumen como párrafos
-      const summaryContent = result.steps.summary.summary;
+      const summaryContent = result.steps.summary.summary || 'No hay resumen disponible';
       children.push(
         new Paragraph({
-          text: summaryContent,
+          text: String(summaryContent),
         })
       );
     }
@@ -561,63 +539,84 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
       );
 
       // Formatear el análisis como párrafos
-      const analysisContent = result.steps.analysis.analysis;
+      const analysisContent = result.steps.analysis.analysis || 'No hay análisis disponible';
 
       // Si el análisis es un objeto, formatearlo adecuadamente
-      if (typeof analysisContent === 'object') {
-        Object.entries(analysisContent).forEach(([key, value]) => {
-          children.push(
-            new Paragraph({
-              text: key,
-              heading: HeadingLevel.HEADING_2,
-            })
-          );
-
-          if (typeof value === 'string') {
+      if (typeof analysisContent === 'object' && analysisContent !== null) {
+        try {
+          Object.entries(analysisContent).forEach(([key, value]) => {
             children.push(
               new Paragraph({
-                text: value,
+                text: String(key),
+                heading: HeadingLevel.HEADING_2,
               })
             );
-          } else if (Array.isArray(value)) {
-            value.forEach(item => {
-              children.push(
-                new Paragraph({
-                  text: `• ${item}`,
-                })
-              );
-            });
-          } else if (typeof value === 'object') {
-            Object.entries(value).forEach(([subKey, subValue]) => {
-              children.push(
-                new Paragraph({
-                  text: subKey,
-                  heading: HeadingLevel.HEADING_3,
-                })
-              );
 
-              if (typeof subValue === 'string') {
+            if (typeof value === 'string') {
+              children.push(
+                new Paragraph({
+                  text: String(value),
+                })
+              );
+            } else if (Array.isArray(value)) {
+              value.forEach(item => {
                 children.push(
                   new Paragraph({
-                    text: subValue,
+                    text: `• ${String(item)}`,
                   })
                 );
-              } else if (Array.isArray(subValue)) {
-                subValue.forEach(item => {
+              });
+            } else if (typeof value === 'object' && value !== null) {
+              Object.entries(value).forEach(([subKey, subValue]) => {
+                children.push(
+                  new Paragraph({
+                    text: String(subKey),
+                    heading: HeadingLevel.HEADING_3,
+                  })
+                );
+
+                if (typeof subValue === 'string') {
                   children.push(
                     new Paragraph({
-                      text: `• ${item}`,
+                      text: String(subValue),
                     })
                   );
-                });
-              }
-            });
-          }
-        });
+                } else if (Array.isArray(subValue)) {
+                  subValue.forEach(item => {
+                    children.push(
+                      new Paragraph({
+                        text: `• ${String(item)}`,
+                      })
+                    );
+                  });
+                } else {
+                  children.push(
+                    new Paragraph({
+                      text: String(subValue),
+                    })
+                  );
+                }
+              });
+            } else {
+              children.push(
+                new Paragraph({
+                  text: String(value),
+                })
+              );
+            }
+          });
+        } catch (error) {
+          console.error('Error procesando análisis:', error);
+          children.push(
+            new Paragraph({
+              text: JSON.stringify(analysisContent, null, 2),
+            })
+          );
+        }
       } else {
         children.push(
           new Paragraph({
-            text: analysisContent,
+            text: String(analysisContent),
           })
         );
       }
@@ -634,62 +633,83 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
       );
 
       // Formatear el plan como párrafos
-      const planContent = result.steps.planning.plan;
+      const planContent = result.steps.planning.plan || 'No hay plan disponible';
 
-      if (typeof planContent === 'object') {
-        Object.entries(planContent).forEach(([key, value]) => {
-          children.push(
-            new Paragraph({
-              text: key,
-              heading: HeadingLevel.HEADING_2,
-            })
-          );
-
-          if (typeof value === 'string') {
+      if (typeof planContent === 'object' && planContent !== null) {
+        try {
+          Object.entries(planContent).forEach(([key, value]) => {
             children.push(
               new Paragraph({
-                text: value,
+                text: String(key),
+                heading: HeadingLevel.HEADING_2,
               })
             );
-          } else if (Array.isArray(value)) {
-            value.forEach(item => {
-              children.push(
-                new Paragraph({
-                  text: `• ${item}`,
-                })
-              );
-            });
-          } else if (typeof value === 'object') {
-            Object.entries(value).forEach(([subKey, subValue]) => {
-              children.push(
-                new Paragraph({
-                  text: subKey,
-                  heading: HeadingLevel.HEADING_3,
-                })
-              );
 
-              if (typeof subValue === 'string') {
+            if (typeof value === 'string') {
+              children.push(
+                new Paragraph({
+                  text: String(value),
+                })
+              );
+            } else if (Array.isArray(value)) {
+              value.forEach(item => {
                 children.push(
                   new Paragraph({
-                    text: subValue,
+                    text: `• ${String(item)}`,
                   })
                 );
-              } else if (Array.isArray(subValue)) {
-                subValue.forEach(item => {
+              });
+            } else if (typeof value === 'object' && value !== null) {
+              Object.entries(value).forEach(([subKey, subValue]) => {
+                children.push(
+                  new Paragraph({
+                    text: String(subKey),
+                    heading: HeadingLevel.HEADING_3,
+                  })
+                );
+
+                if (typeof subValue === 'string') {
                   children.push(
                     new Paragraph({
-                      text: `• ${item}`,
+                      text: String(subValue),
                     })
                   );
-                });
-              }
-            });
-          }
-        });
+                } else if (Array.isArray(subValue)) {
+                  subValue.forEach(item => {
+                    children.push(
+                      new Paragraph({
+                        text: `• ${String(item)}`,
+                      })
+                    );
+                  });
+                } else {
+                  children.push(
+                    new Paragraph({
+                      text: String(subValue),
+                    })
+                  );
+                }
+              });
+            } else {
+              children.push(
+                new Paragraph({
+                  text: String(value),
+                })
+              );
+            }
+          });
+        } catch (error) {
+          console.error('Error procesando plan:', error);
+          children.push(
+            new Paragraph({
+              text: JSON.stringify(planContent, null, 2),
+            })
+          );
+        }
       } else {
         children.push(
           new Paragraph({
-            text: planContent,
+            text: String(planContent),
           })
         );
       }
@@ -704,9 +724,17 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
       })
     );
 
-    // Agregar todos los elementos al documento
-    doc.addSection({
-      children: children,
+    // Crear documento Word con las secciones
+    const doc = new Document({
+      creator: "Walter Meeting",
+      title: `Informe de Reunión - ${meetingId}`,
+      description: 'Informe generado automáticamente por Walter Meeting',
+      sections: [
+        {
+          properties: {},
+          children: children,
+        },
+      ],
     });
 
     // Generar el documento
