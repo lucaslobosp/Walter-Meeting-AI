@@ -462,6 +462,58 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
       });
     }
 
+    // Función auxiliar para formatear objetos complejos
+    const formatComplexObject = (obj, level = 0) => {
+      const elements = [];
+
+      if (typeof obj === 'string') {
+        return obj;
+      }
+
+      if (typeof obj === 'number') {
+        return obj.toString();
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map(item => {
+          if (typeof item === 'object' && item !== null) {
+            if (item.text) return item.text;
+            if (item.title) return item.title;
+            if (item.name) return item.name;
+            if (item.description) return item.description;
+            return Object.values(item).filter(v => typeof v === 'string').join(' - ');
+          }
+          return String(item);
+        }).join('\n• ');
+      }
+
+      if (typeof obj === 'object' && obj !== null) {
+        const result = [];
+        for (const [key, value] of Object.entries(obj)) {
+          if (typeof value === 'string' || typeof value === 'number') {
+            result.push(`${key}: ${value}`);
+          } else if (Array.isArray(value)) {
+            const formattedArray = value.map(item => {
+              if (typeof item === 'object' && item !== null) {
+                if (item.text) return item.text;
+                if (item.title) return item.title;
+                if (item.name) return item.name;
+                if (item.description) return item.description;
+                return Object.values(item).filter(v => typeof v === 'string').join(' - ');
+              }
+              return String(item);
+            }).join(', ');
+            result.push(`${key}: ${formattedArray}`);
+          } else if (typeof value === 'object' && value !== null) {
+            result.push(`${key}: ${formatComplexObject(value, level + 1)}`);
+          }
+        }
+        return result.join('\n');
+      }
+
+      return String(obj);
+    };
+
     // Elementos del documento
     const children = [];
 
@@ -513,105 +565,151 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
     if (result.steps.summary && result.steps.summary.success) {
       children.push(
         new Paragraph({
-          text: "Resumen",
+          text: "Resumen Ejecutivo",
           heading: HeadingLevel.HEADING_1,
           pageBreakBefore: true,
         })
       );
 
-      // Formatear el resumen como párrafos
       const summaryContent = result.steps.summary.summary || 'No hay resumen disponible';
-      children.push(
-        new Paragraph({
-          text: String(summaryContent),
-        })
-      );
+
+      if (typeof summaryContent === 'object' && summaryContent !== null) {
+        const formattedSummary = formatComplexObject(summaryContent);
+        children.push(
+          new Paragraph({
+            text: formattedSummary,
+          })
+        );
+      } else {
+        children.push(
+          new Paragraph({
+            text: String(summaryContent),
+          })
+        );
+      }
     }
 
     // Sección de Análisis
     if (result.steps.analysis && result.steps.analysis.success) {
       children.push(
         new Paragraph({
-          text: "Análisis",
+          text: "Análisis Detallado",
           heading: HeadingLevel.HEADING_1,
           pageBreakBefore: true,
         })
       );
 
-      // Formatear el análisis como párrafos
       const analysisContent = result.steps.analysis.analysis || 'No hay análisis disponible';
 
-      // Si el análisis es un objeto, formatearlo adecuadamente
       if (typeof analysisContent === 'object' && analysisContent !== null) {
-        try {
-          Object.entries(analysisContent).forEach(([key, value]) => {
-            children.push(
-              new Paragraph({
-                text: String(key),
-                heading: HeadingLevel.HEADING_2,
-              })
-            );
-
-            if (typeof value === 'string') {
-              children.push(
-                new Paragraph({
-                  text: String(value),
-                })
-              );
-            } else if (Array.isArray(value)) {
-              value.forEach(item => {
-                children.push(
-                  new Paragraph({
-                    text: `• ${String(item)}`,
-                  })
-                );
-              });
-            } else if (typeof value === 'object' && value !== null) {
-              Object.entries(value).forEach(([subKey, subValue]) => {
-                children.push(
-                  new Paragraph({
-                    text: String(subKey),
-                    heading: HeadingLevel.HEADING_3,
-                  })
-                );
-
-                if (typeof subValue === 'string') {
-                  children.push(
-                    new Paragraph({
-                      text: String(subValue),
-                    })
-                  );
-                } else if (Array.isArray(subValue)) {
-                  subValue.forEach(item => {
-                    children.push(
-                      new Paragraph({
-                        text: `• ${String(item)}`,
-                      })
-                    );
-                  });
-                } else {
-                  children.push(
-                    new Paragraph({
-                      text: String(subValue),
-                    })
-                  );
-                }
-              });
-            } else {
-              children.push(
-                new Paragraph({
-                  text: String(value),
-                })
-              );
-            }
-          });
-        } catch (error) {
-          console.error('Error procesando análisis:', error);
+        // Temas Clave
+        if (analysisContent.keyTopics) {
           children.push(
             new Paragraph({
-              text: JSON.stringify(analysisContent, null, 2),
+              text: "Temas Clave",
+              heading: HeadingLevel.HEADING_2,
             })
           );
+
+          if (Array.isArray(analysisContent.keyTopics)) {
+            analysisContent.keyTopics.forEach(topic => {
+              const topicText = formatComplexObject(topic);
+              children.push(
+                new Paragraph({
+                  text: `• ${topicText}`,
+                })
+              );
+            });
+          }
+        }
+
+        // Análisis de Sentimiento
+        if (analysisContent.sentiment) {
+          children.push(
+            new Paragraph({
+              text: "Análisis de Sentimiento",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          const sentiment = analysisContent.sentiment;
+          if (sentiment.score !== undefined) {
+            children.push(
+              new Paragraph({
+                text: `Puntuación de Sentimiento: ${sentiment.score} (${sentiment.score > 0.5 ? 'Positivo' : sentiment.score < -0.5 ? 'Negativo' : 'Neutral'})`,
+              })
+            );
+          }
+          if (sentiment.comparative !== undefined) {
+            children.push(
+              new Paragraph({
+                text: `Valor Comparativo: ${sentiment.comparative}`,
+              })
+            );
+          }
+        }
+
+        // Preguntas Identificadas
+        if (analysisContent.questions) {
+          children.push(
+            new Paragraph({
+              text: "Preguntas Identificadas",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          if (Array.isArray(analysisContent.questions)) {
+            analysisContent.questions.forEach(question => {
+              const questionText = formatComplexObject(question);
+              children.push(
+                new Paragraph({
+                  text: `• ${questionText}`,
+                })
+              );
+            });
+          }
+        }
+
+        // Objetivos Identificados
+        if (analysisContent.objectives) {
+          children.push(
+            new Paragraph({
+              text: "Objetivos Identificados",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          if (Array.isArray(analysisContent.objectives)) {
+            analysisContent.objectives.forEach(objective => {
+              const objectiveText = formatComplexObject(objective);
+              children.push(
+                new Paragraph({
+                  text: `• ${objectiveText}`,
+                })
+              );
+            });
+          }
+        }
+
+        // Tareas Identificadas
+        if (analysisContent.tasks) {
+          children.push(
+            new Paragraph({
+              text: "Tareas Identificadas",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          if (Array.isArray(analysisContent.tasks)) {
+            analysisContent.tasks.forEach(task => {
+              const taskText = formatComplexObject(task);
+              children.push(
+                new Paragraph({
+                  text: `• ${taskText}`,
+                })
+              );
+            });
+          }
         }
       } else {
         children.push(
@@ -626,85 +724,155 @@ app.get('/api/meetings/:meetingId/report', async (req, res) => {
     if (result.steps.planning && result.steps.planning.success) {
       children.push(
         new Paragraph({
-          text: "Plan de Acción",
+          text: "Plan de Acción Estratégico",
           heading: HeadingLevel.HEADING_1,
           pageBreakBefore: true,
         })
       );
 
-      // Formatear el plan como párrafos
       const planContent = result.steps.planning.plan || 'No hay plan disponible';
 
       if (typeof planContent === 'object' && planContent !== null) {
-        try {
-          Object.entries(planContent).forEach(([key, value]) => {
-            children.push(
-              new Paragraph({
-                text: String(key),
-                heading: HeadingLevel.HEADING_2,
-              })
-            );
-
-            if (typeof value === 'string') {
-              children.push(
-                new Paragraph({
-                  text: String(value),
-                })
-              );
-            } else if (Array.isArray(value)) {
-              value.forEach(item => {
-                children.push(
-                  new Paragraph({
-                    text: `• ${String(item)}`,
-                  })
-                );
-              });
-            } else if (typeof value === 'object' && value !== null) {
-              Object.entries(value).forEach(([subKey, subValue]) => {
-                children.push(
-                  new Paragraph({
-                    text: String(subKey),
-                    heading: HeadingLevel.HEADING_3,
-                  })
-                );
-
-                if (typeof subValue === 'string') {
-                  children.push(
-                    new Paragraph({
-                      text: String(subValue),
-                    })
-                  );
-                } else if (Array.isArray(subValue)) {
-                  subValue.forEach(item => {
-                    children.push(
-                      new Paragraph({
-                        text: `• ${String(item)}`,
-                      })
-                    );
-                  });
-                } else {
-                  children.push(
-                    new Paragraph({
-                      text: String(subValue),
-                    })
-                  );
-                }
-              });
-            } else {
-              children.push(
-                new Paragraph({
-                  text: String(value),
-                })
-              );
-            }
-          });
-        } catch (error) {
-          console.error('Error procesando plan:', error);
+        // Información general del plan
+        if (planContent.name) {
           children.push(
             new Paragraph({
-              text: JSON.stringify(planContent, null, 2),
+              text: "Nombre del Plan",
+              heading: HeadingLevel.HEADING_2,
             })
           );
+          children.push(
+            new Paragraph({
+              text: String(planContent.name),
+            })
+          );
+        }
+
+        if (planContent.description) {
+          children.push(
+            new Paragraph({
+              text: "Descripción",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+          children.push(
+            new Paragraph({
+              text: String(planContent.description),
+            })
+          );
+        }
+
+        // Fechas del plan
+        if (planContent.startDate || planContent.endDate) {
+          children.push(
+            new Paragraph({
+              text: "Cronograma",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          if (planContent.startDate) {
+            children.push(
+              new Paragraph({
+                text: `Fecha de Inicio: ${planContent.startDate}`,
+              })
+            );
+          }
+
+          if (planContent.endDate) {
+            children.push(
+              new Paragraph({
+                text: `Fecha de Finalización: ${planContent.endDate}`,
+              })
+            );
+          }
+        }
+
+        // Objetivos del plan
+        if (planContent.objectives) {
+          children.push(
+            new Paragraph({
+              text: "Objetivos del Plan",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          if (Array.isArray(planContent.objectives)) {
+            planContent.objectives.forEach(objective => {
+              const objectiveText = formatComplexObject(objective);
+              children.push(
+                new Paragraph({
+                  text: `• ${objectiveText}`,
+                })
+              );
+            });
+          }
+        }
+
+        // Tareas del plan
+        if (planContent.ganttData && planContent.ganttData.tasks) {
+          children.push(
+            new Paragraph({
+              text: "Tareas Programadas",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          if (Array.isArray(planContent.ganttData.tasks)) {
+            planContent.ganttData.tasks.forEach((task, index) => {
+              children.push(
+                new Paragraph({
+                  text: `Tarea ${index + 1}`,
+                  heading: HeadingLevel.HEADING_3,
+                })
+              );
+
+              const taskText = formatComplexObject(task);
+              children.push(
+                new Paragraph({
+                  text: taskText,
+                })
+              );
+            });
+          }
+        }
+
+        // Tareas no asignadas
+        if (planContent.unassignedTasks && Array.isArray(planContent.unassignedTasks) && planContent.unassignedTasks.length > 0) {
+          children.push(
+            new Paragraph({
+              text: "Tareas Pendientes de Asignación",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          planContent.unassignedTasks.forEach(task => {
+            const taskText = formatComplexObject(task);
+            children.push(
+              new Paragraph({
+                text: `• ${taskText}`,
+              })
+            );
+          });
+        }
+
+        // Dependencias
+        if (planContent.ganttData && planContent.ganttData.dependencies && Array.isArray(planContent.ganttData.dependencies) && planContent.ganttData.dependencies.length > 0) {
+          children.push(
+            new Paragraph({
+              text: "Dependencias entre Tareas",
+              heading: HeadingLevel.HEADING_2,
+            })
+          );
+
+          planContent.ganttData.dependencies.forEach(dependency => {
+            const dependencyText = formatComplexObject(dependency);
+            children.push(
+              new Paragraph({
+                text: `• ${dependencyText}`,
+              })
+            );
+          });
         }
       } else {
         children.push(
