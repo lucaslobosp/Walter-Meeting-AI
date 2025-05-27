@@ -16,7 +16,7 @@ Walter Meeting es un sistema inteligente que utiliza agentes de IA para transcri
 
 ## 🚀 Demo en Vivo
 
-[Ver Demo](https://walter-meeting.onrender.com) *(Próximamente)*
+[Ver Demo](https://walter-meeting-ai.onrender.com) 
 
 ## 📋 Requisitos
 
